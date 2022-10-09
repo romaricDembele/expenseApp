@@ -1,61 +1,59 @@
+import 'package:expenses_app/model/budget_remain.dart';
 import 'package:expenses_app/views/interface_observer.dart';
 import 'package:expenses_app/views/setting_view.dart';
 import 'package:flutter/material.dart';
 
-class HomeView extends StatelessWidget implements InterfaceObserver {
-  const HomeView({Key? key}) : super(key: key);
+class HomeView extends StatelessWidget {
+  BudgetRemain budgetRemain;
+
+  HomeView({Key? key, required this.budgetRemain}) : super(key: key);
+  // HomeView.budget({required this.budgetRemain});
 
   static const String _title = 'Home View';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Expense Manager'),
-      ),
-      body: const Text('data'),
-      bottomNavigationBar: const HomeBottomBarStatefullWidget(),
-    );
+    return HomeStatefullWidget(budgetRemain: budgetRemain);
   }
+}
+
+class HomeStatefullWidget extends StatefulWidget {
+  BudgetRemain budgetRemain;
+
+  HomeStatefullWidget({Key? key, required this.budgetRemain}) : super(key: key);
 
   @override
-  void update() {
-    // TODO: implement update
-  }
+  State<StatefulWidget> createState() => _HomeState(budgetRemain: budgetRemain);
 }
 
-class HomeBottomBarStatefullWidget extends StatefulWidget {
-  const HomeBottomBarStatefullWidget({Key? key}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return _HomeBottomBarState();
-  }
-}
-
-List<BottomNavigationBarItem> generateBottomNavigationBarItems() {
-  return [
-    const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-    const BottomNavigationBarItem(
-        icon: Icon(Icons.currency_exchange), label: 'Add expense'),
-    const BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings')
-  ];
-}
-
-class _HomeBottomBarState extends State {
-  int _selectedIndex = 0;
-  void changeSelectedItem(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+class _HomeState extends State<StatefulWidget> {
+  BudgetRemain budgetRemain;
+  _HomeState({required this.budgetRemain});
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      items: generateBottomNavigationBarItems(),
-      currentIndex: _selectedIndex,
-      onTap: changeSelectedItem,
-    );
+    budgetRemain.remainFood.toString();
+
+    return DataTable(columns: const <DataColumn>[
+      DataColumn(label: Text('Item')),
+      DataColumn(label: Text('Allocated money'))
+    ], rows: <DataRow>[
+      DataRow(cells: <DataCell>[
+        const DataCell(Text('Food')),
+        DataCell(Text(budgetRemain.remainFood.toString()))
+      ]),
+      DataRow(cells: <DataCell>[
+        const DataCell(Text('Excess cash')),
+        DataCell(Text(budgetRemain.excessCash.toString()))
+      ]),
+      DataRow(cells: <DataCell>[
+        const DataCell(Text('Give Away')),
+        DataCell(Text(budgetRemain.remainGiveAway.toString()))
+      ]),
+      DataRow(cells: <DataCell>[
+        const DataCell(Text('Investment')),
+        DataCell(Text(budgetRemain.remainInvestment.toString()))
+      ]),
+    ]);
   }
 }

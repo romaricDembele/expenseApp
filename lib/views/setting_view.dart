@@ -14,16 +14,11 @@ import 'package:expenses_app/model/setting_elements/subscription.dart';
 import 'package:expenses_app/views/interface_observer.dart';
 import 'package:expenses_app/model/setting.dart';
 
-class SettingView implements InterfaceObserver {
+class SettingView {
   SettingController settingController;
   Setting setting;
 
   SettingView({required this.setting, required this.settingController});
-
-  @override
-  void update() {
-    // TODO: implement update
-  }
 
   void setSetting() {
     // double budget = GetElementText('budget');
@@ -36,7 +31,7 @@ class SettingView implements InterfaceObserver {
         investment: Investment(),
         giveAway: GiveAway(),
         need: Need(),
-        food: Food(),
+        food: Food(0),
         subscription: Subscription(),
         rent: Rent());
     settingController.setSetting(sett);

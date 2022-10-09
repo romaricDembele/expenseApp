@@ -1,5 +1,7 @@
 import 'package:expenses_app/controller/home_controller.dart';
 import 'package:expenses_app/controller/setting_controller.dart';
+import 'package:expenses_app/model/budget_remain.dart';
+import 'package:expenses_app/views/home_view.dart';
 import 'package:flutter/material.dart';
 
 import 'model/setting_elements/food.dart';
@@ -19,9 +21,9 @@ void main() {
 }
 
 HomeController setupApp() {
-  Setting sett = Setting(
+  Setting setting = Setting(
       budget: 0,
-      food: Food(),
+      food: Food(0),
       giveAway: GiveAway(),
       iG: IG(),
       investment: Investment(),
@@ -30,9 +32,10 @@ HomeController setupApp() {
       safeDeposit: SafeDeposit(),
       subscription: Subscription());
   // ignore: unused_local_variable
-  SettingController settingController = SettingController(setting: sett);
-  //  _budgetRemain = BudgetRemain();
-  HomeController homeController = HomeController();
+  SettingController settingController = SettingController(setting: setting);
+  BudgetRemain budgetRemain = BudgetRemain(setting: setting);
+  HomeController homeController =
+      HomeController(budgetRemain: budgetRemain, setting: setting);
   return homeController;
 }
 
@@ -41,12 +44,69 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    HomeController homeController = setupApp();
+    // HomeController homeController = setupApp();
 
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Expense Manager',
-      home: homeController.homeView,
+      home: AppStatefullWidget(),
     );
+  }
+}
+
+class AppStatefullWidget extends StatefulWidget {
+  const AppStatefullWidget({Key? key}) : super(key: key);
+
+  @override
+  State<AppStatefullWidget> createState() => _AppStatefullWidgetState();
+}
+
+List<Widget> generateAppViews() {
+  HomeController homeController = setupApp();
+  List<Widget> appviews = [
+    homeController.homeView,
+    homeController.expenseView,
+    const Text('Settings View')
+  ];
+  return appviews;
+}
+
+List<BottomNavigationBarItem> generateBottomNavigationBarItems() {
+  return [
+    const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+    const BottomNavigationBarItem(
+        icon: Icon(Icons.currency_exchange), label: 'Add expense'),
+    const BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings')
+  ];
+}
+
+class _AppStatefullWidgetState extends State<AppStatefullWidget> {
+  int _selectedIndex = 0;
+  List<Widget> appviews = [];
+
+  _AppStatefullWidgetState() {
+    List<Widget> appviews = generateAppViews();
+    this.appviews = appviews;
+  }
+
+  void _changeSelectedItem(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // List<Widget> appviews = _generateAppViews();
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Expense Manager'),
+        ),
+        body: appviews.elementAt(_selectedIndex),
+        bottomNavigationBar: BottomNavigationBar(
+          items: generateBottomNavigationBarItems(),
+          currentIndex: _selectedIndex,
+          onTap: _changeSelectedItem,
+        ));
   }
 }

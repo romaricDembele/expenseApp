@@ -7,4 +7,13 @@ abstract class InterfaceExpense {
 
   get expense => _expense;
   set expense(value) => _expense = value;
+
+  // InterfaceExpense(double rate, double expense) {
+  //   _rate = rate;
+  //   _expense = expense;
+  // }
+
+  void addExpense(double expense) {
+    _expense += expense;
+  }
 }

@@ -10,28 +10,31 @@ class HomeController implements InterfaceHomeController {
   late HomeView _homeView;
   late ExpenseView _expenseView;
 
-  BudgetRemain budgetRemain;
-  Setting setting;
+  Setting _setting;
+  BudgetRemain _budgetRemain;
 
   //Getters
   get homeView => _homeView;
   get expenseView => _expenseView;
 
   // Constructor
-  HomeController({required this.budgetRemain, required this.setting}) {
+  HomeController({required Setting setting})
+      : _setting = setting,
+        _budgetRemain = setting.budgetRemain {
     createHomeView();
     createExpenseView();
   }
 
   void createHomeView() {
-    HomeView homeView = HomeView(budgetRemain: budgetRemain);
+    HomeView homeView =
+        HomeView(budgetRemain: _budgetRemain, setting: _setting);
     _homeView = homeView;
   }
 
   void createExpenseView() {
     ExpenseView expenseView = ExpenseView(
       homeController: this,
-      setting: setting,
+      setting: _setting,
     );
     _expenseView = expenseView;
   }
@@ -40,42 +43,42 @@ class HomeController implements InterfaceHomeController {
     switch (dropdownValue) {
       case 'Safe deposit':
         {
-          setting.addSafeDeposit(double.parse(expenseAmount));
+          _setting.addSafeDeposit(double.parse(expenseAmount));
         }
         break;
       case 'Investment':
         {
-          setting.addInvestment(double.parse(expenseAmount));
+          _setting.addInvestment(double.parse(expenseAmount));
         }
         break;
       case 'IG':
         {
-          setting.addIG(double.parse(expenseAmount));
+          _setting.addIG(double.parse(expenseAmount));
         }
         break;
       case 'Give Away':
         {
-          setting.addGiveAway(double.parse(expenseAmount));
+          _setting.addGiveAway(double.parse(expenseAmount));
         }
         break;
       case 'Need':
         {
-          setting.addNeed(double.parse(expenseAmount));
+          _setting.addNeed(double.parse(expenseAmount));
         }
         break;
       case 'Food':
         {
-          setting.addFood(double.parse(expenseAmount));
+          _setting.addFood(double.parse(expenseAmount));
         }
         break;
       case 'Subscription':
         {
-          setting.addSubscription(double.parse(expenseAmount));
+          _setting.addSubscription(double.parse(expenseAmount));
         }
         break;
       case 'Rent':
         {
-          setting.addRent(double.parse(expenseAmount));
+          _setting.addRent(double.parse(expenseAmount));
         }
         break;
       default:

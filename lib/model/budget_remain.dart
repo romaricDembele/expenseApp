@@ -1,9 +1,13 @@
-import 'package:expenses_app/controller/home_controller.dart';
 import 'package:expenses_app/model/interface_subject.dart';
 import 'package:expenses_app/model/setting.dart';
 import 'package:expenses_app/model/setting_elements/food.dart';
 import 'package:expenses_app/model/setting_elements/give_away.dart';
+import 'package:expenses_app/model/setting_elements/i_g.dart';
 import 'package:expenses_app/model/setting_elements/investment.dart';
+import 'package:expenses_app/model/setting_elements/need.dart';
+import 'package:expenses_app/model/setting_elements/rent.dart';
+import 'package:expenses_app/model/setting_elements/safe_deposit.dart';
+import 'package:expenses_app/model/setting_elements/subscription.dart';
 import 'package:expenses_app/views/interface_observer.dart';
 
 class BudgetRemain implements InterfaceSubject {
@@ -11,31 +15,38 @@ class BudgetRemain implements InterfaceSubject {
   double _excessCash = 0; // Waiting for expenses databaase setup.
   double _remainGiveAway = 0;
   double _remainInvestment = 0;
+  double _remainNeed = 0;
+  double _remainRent = 0;
+  double _remainSafeDeposit = 0;
+  double _remainSubscription = 0;
+  double _remainiG = 0;
 
   Setting setting;
 
   BudgetRemain({required this.setting}) {
-    calculateRemainFood();
-    calculateExcessCash();
-    calculateRemainGiveAway();
-    calculateRemainInvestment();
+    calculateRemainBudget();
   }
 
   get remainFood => _remainFood;
 
-  set remainFood(value) => _remainFood = value;
-
   get excessCash => _excessCash;
-
-  set excessCash(value) => _excessCash = value;
 
   get remainGiveAway => _remainGiveAway;
 
-  set remainGiveAway(value) => _remainGiveAway = value;
-
   get remainInvestment => _remainInvestment;
 
-  set remainInvestment(value) => _remainInvestment = value;
+  void calculateRemainBudget() {
+    calculateRemainFood();
+    calculateExcessCash();
+    calculateRemainGiveAway();
+    calculateRemainInvestment();
+    calculateRemainIg();
+    calculateRemainNeed();
+    calculateRemainRent();
+    calculateRemainSafeDeposit();
+    calculateRemainSubscription();
+    notifyObserver();
+  }
 
   void calculateRemainFood() {
     Food food = setting.food;
@@ -48,11 +59,13 @@ class BudgetRemain implements InterfaceSubject {
     remainFood = (rate * budget) - expense;
 
     _remainFood = remainFood;
+    notifyObserver();
   }
 
   // Waiting for expenses databaase setup.
   void calculateExcessCash() {
     _excessCash = 1;
+    notifyObserver();
   }
 
   void calculateRemainGiveAway() {
@@ -66,6 +79,7 @@ class BudgetRemain implements InterfaceSubject {
     remainGiveAway = (rate * budget) - expense;
 
     _remainGiveAway = remainGiveAway;
+    notifyObserver();
   }
 
   void calculateRemainInvestment() {
@@ -79,6 +93,77 @@ class BudgetRemain implements InterfaceSubject {
     remainInvestment = (rate * budget) - expense;
 
     _remainInvestment = remainInvestment;
+    notifyObserver();
+  }
+
+  void calculateRemainNeed() {
+    Need need = setting.need;
+    double remainNeed = 0;
+
+    double budget = setting.budget;
+    double rate = need.rate;
+    double expense = need.expense;
+
+    remainNeed = (rate * budget) - expense;
+
+    _remainNeed = remainNeed;
+    notifyObserver();
+  }
+
+  void calculateRemainRent() {
+    Rent rent = setting.rent;
+    double remainRent = 0;
+
+    double budget = setting.budget;
+    double rate = rent.rate;
+    double expense = rent.expense;
+
+    remainRent = (rate * budget) - expense;
+
+    _remainRent = remainRent;
+    notifyObserver();
+  }
+
+  void calculateRemainSafeDeposit() {
+    SafeDeposit safeDeposit = setting.safeDeposit;
+    double remainSafeDeposit = 0;
+
+    double budget = setting.budget;
+    double rate = safeDeposit.rate;
+    double expense = safeDeposit.expense;
+
+    remainSafeDeposit = (rate * budget) - expense;
+
+    _remainSafeDeposit = remainSafeDeposit;
+    notifyObserver();
+  }
+
+  void calculateRemainSubscription() {
+    Subscription subscription = setting.subscription;
+    double remainSubscription = 0;
+
+    double budget = setting.budget;
+    double rate = subscription.rate;
+    double expense = subscription.expense;
+
+    remainSubscription = (rate * budget) - expense;
+
+    _remainSubscription = remainSubscription;
+    notifyObserver();
+  }
+
+  void calculateRemainIg() {
+    IG iG = setting.iG;
+    double remainIG = 0;
+
+    double budget = setting.budget;
+    double rate = iG.rate;
+    double expense = iG.expense;
+
+    remainIG = (rate * budget) - expense;
+
+    _remainiG = remainIG;
+    notifyObserver();
   }
 
   @override
@@ -86,16 +171,16 @@ class BudgetRemain implements InterfaceSubject {
 
   @override
   void notifyObserver() {
-    // TODO: implement notifyObserver
+    for (InterfaceObserver ob in observers) {
+      ob.update(this);
+    }
   }
 
   @override
   void subscribeObserver(InterfaceObserver observer) {
-    // TODO: implement subscribeObserver
+    observers.add(observer);
   }
 
   @override
-  void unsubscribeObserver(InterfaceObserver observer) {
-    // TODO: implement unsubscribeObserver
-  }
+  void unsubscribeObserver(InterfaceObserver observer) {}
 }

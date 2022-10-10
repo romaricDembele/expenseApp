@@ -20,7 +20,7 @@ void main() {
   runApp(const MyApp());
 }
 
-HomeController setupApp() {
+List<Object> setupApp() {
   Setting setting = Setting(
       budget: 0,
       food: Food(0),
@@ -33,10 +33,9 @@ HomeController setupApp() {
       subscription: Subscription());
   // ignore: unused_local_variable
   SettingController settingController = SettingController(setting: setting);
-  BudgetRemain budgetRemain = BudgetRemain(setting: setting);
-  HomeController homeController =
-      HomeController(budgetRemain: budgetRemain, setting: setting);
-  return homeController;
+  // BudgetRemain budgetRemain = BudgetRemain(setting: setting);
+  HomeController homeController = HomeController(setting: setting);
+  return [homeController, settingController];
 }
 
 class MyApp extends StatelessWidget {
@@ -62,11 +61,14 @@ class AppStatefullWidget extends StatefulWidget {
 }
 
 List<Widget> generateAppViews() {
-  HomeController homeController = setupApp();
+  List<Object> controllers = setupApp();
+  HomeController homeController = controllers[0] as HomeController;
+  SettingController settingController = controllers[1] as SettingController;
   List<Widget> appviews = [
     homeController.homeView,
     homeController.expenseView,
-    const Text('Settings View')
+    // const Text('Settings View')
+    settingController.settingView
   ];
   return appviews;
 }

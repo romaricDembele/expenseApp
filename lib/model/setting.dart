@@ -1,3 +1,4 @@
+import 'package:expenses_app/model/budget_remain.dart';
 import 'package:expenses_app/model/interface_setting.dart';
 import 'package:expenses_app/model/interface_subject.dart';
 import 'package:expenses_app/model/setting_elements/food.dart';
@@ -21,57 +22,35 @@ class Setting implements InterfaceSubject, InterfaceSetting {
   Food _food;
   Subscription _subscription;
   Rent _rent;
+  late BudgetRemain budgetRemain;
+  get getBudgetRemain => budgetRemain;
 
   get budget => _budget;
-  set budget(value) => _budget = value;
+
+  set setBudget(double value) {
+    _budget = value;
+    budgetRemain.calculateRemainBudget();
+  }
 
   // // get setting => _setting;
   // // set setting(value) => _setting = value;
 
   get safeDeposit => _safeDeposit;
-  set safeDeposit(value) {
-    _safeDeposit = value;
-    notifyObserver();
-  }
 
   get iG => _iG;
   set iG(value) => _iG = value;
 
   get investment => _investment;
-  set investment(value) {
-    _investment = value;
-    notifyObserver();
-  }
 
   get giveAway => _giveAway;
-  set giveAway(value) {
-    _giveAway = value;
-    notifyObserver();
-  }
 
   get need => _need;
-  set need(value) {
-    _need = value;
-    notifyObserver();
-  }
 
   get food => _food;
-  set setFood(value) {
-    _food = value;
-    notifyObserver();
-  }
 
   get subscription => _subscription;
-  set subscription(value) {
-    _subscription = value;
-    notifyObserver();
-  }
 
   get rent => _rent;
-  set rent(value) {
-    _rent = value;
-    notifyObserver();
-  }
 
   // Constructor
   Setting(
@@ -92,10 +71,17 @@ class Setting implements InterfaceSubject, InterfaceSetting {
         _need = need,
         _food = food,
         _subscription = subscription,
-        _rent = rent;
+        _rent = rent {
+    createBudgetRemain();
+  }
 
   @override
   List<InterfaceObserver> observers = [];
+
+  void createBudgetRemain() {
+    BudgetRemain remain = BudgetRemain(setting: this);
+    budgetRemain = remain;
+  }
 
   @override
   void notifyObserver() {
@@ -110,53 +96,119 @@ class Setting implements InterfaceSubject, InterfaceSetting {
   }
 
   @override
-  void unsubscribeObserver(InterfaceObserver observer) {}
+  void unsubscribeObserver(InterfaceObserver observer) {
+    observers.remove(observer);
+  }
 
   @override
   void addFood(double expense) {
     _food.addExpense(expense);
     notifyObserver();
+    budgetRemain.calculateRemainBudget();
   }
 
   @override
   void addGiveAway(double expense) {
     _giveAway.addExpense(expense);
     notifyObserver();
+    budgetRemain.calculateRemainBudget();
   }
 
   @override
   void addIG(double expense) {
     _iG.addExpense(expense);
     notifyObserver();
+    budgetRemain.calculateRemainBudget();
   }
 
   @override
   void addInvestment(double expense) {
     _investment.addExpense(expense);
     notifyObserver();
+    budgetRemain.calculateRemainBudget();
   }
 
   @override
   void addNeed(double expense) {
     _need.addExpense(expense);
     notifyObserver();
+    budgetRemain.calculateRemainBudget();
   }
 
   @override
   void addRent(double expense) {
     _rent.addExpense(expense);
     notifyObserver();
+    budgetRemain.calculateRemainBudget();
   }
 
   @override
   void addSafeDeposit(double expense) {
     _safeDeposit.addExpense(expense);
     notifyObserver();
+    budgetRemain.calculateRemainBudget();
   }
 
   @override
   void addSubscription(double expense) {
     _subscription.addExpense(expense);
     notifyObserver();
+    budgetRemain.calculateRemainBudget();
+  }
+
+  @override
+  void changeFoodRate(double rate) {
+    _food.rate = (rate);
+    notifyObserver();
+    budgetRemain.calculateRemainFood();
+  }
+
+  @override
+  void changeGiveAwayRate(double rate) {
+    _giveAway.rate = (rate);
+    notifyObserver();
+    budgetRemain.calculateRemainGiveAway();
+  }
+
+  @override
+  void changeIgRate(double rate) {
+    _iG.rate = (rate);
+    notifyObserver();
+    budgetRemain.calculateRemainIg();
+  }
+
+  @override
+  void changeInvestmentRate(double rate) {
+    _investment.rate = (rate);
+    notifyObserver();
+    budgetRemain.calculateRemainInvestment();
+  }
+
+  @override
+  void changeNeedRate(double rate) {
+    _need.rate = (rate);
+    notifyObserver();
+    budgetRemain.calculateRemainNeed();
+  }
+
+  @override
+  void changeRentRate(double rate) {
+    _rent.rate = (rate);
+    notifyObserver();
+    budgetRemain.calculateRemainRent();
+  }
+
+  @override
+  void changeSafeDepositRate(double rate) {
+    _safeDeposit.rate = (rate);
+    notifyObserver();
+    budgetRemain.calculateRemainSafeDeposit();
+  }
+
+  @override
+  void changeSubscriptionRate(double rate) {
+    _subscription.rate = (rate);
+    notifyObserver();
+    budgetRemain.calculateRemainSubscription();
   }
 }

@@ -74,10 +74,10 @@ class _ExpenseViewState extends State<ExpenseView>
   Widget _addExpenseForm() {
     return Expanded(
       child: Form(
-          child: Container(
-              child: Column(
+          child: Column(
         children: [
           TextFormField(
+            keyboardType: TextInputType.number,
             decoration: const InputDecoration(hintText: 'Money amount'),
             controller: expenseTypeController,
           ),
@@ -92,7 +92,7 @@ class _ExpenseViewState extends State<ExpenseView>
                 child: const Text('Submit')),
           )
         ],
-      ))),
+      )),
     );
   }
 

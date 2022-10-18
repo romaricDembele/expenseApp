@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import 'package:expenses_app/controller/home_controller.dart';
 import 'package:expenses_app/controller/setting_controller.dart';
 import 'package:expenses_app/model/budget_remain.dart';
+import 'package:expenses_app/persistence/setting_adapter.dart';
 import 'package:expenses_app/views/home_view.dart';
 import 'package:flutter/material.dart';
 
@@ -16,14 +20,18 @@ import 'model/setting.dart';
 
 // import './controller/setting_controller.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+      // options: DefaultFirebaseOptions.currentPlatform,
+      );
   runApp(const MyApp());
 }
 
 List<Object> setupApp() {
   Setting setting = Setting(
       budget: 0,
-      food: Food(0),
+      food: Food(),
       giveAway: GiveAway(),
       iG: IG(),
       investment: Investment(),
@@ -32,7 +40,12 @@ List<Object> setupApp() {
       safeDeposit: SafeDeposit(),
       subscription: Subscription());
   // ignore: unused_local_variable
-  SettingController settingController = SettingController(setting: setting);
+  FirebaseFirestore db = FirebaseFirestore.instance;
+  SettingAdapter settingAdapter = SettingAdapter(db);
+  SettingController settingController = SettingController(
+      setting: setting,
+      updateSettingRatesPort: settingAdapter,
+      loadSettingRatesPort: settingAdapter);
   // BudgetRemain budgetRemain = BudgetRemain(setting: setting);
   HomeController homeController = HomeController(setting: setting);
   return [homeController, settingController];
@@ -62,6 +75,11 @@ class AppStatefullWidget extends StatefulWidget {
 
 List<Widget> generateAppViews() {
   List<Object> controllers = setupApp();
+  // List<Object> controllers = [];
+  // setupApp().then((List<Object> value) {
+  //   controllers = value;
+  // });
+
   HomeController homeController = controllers[0] as HomeController;
   SettingController settingController = controllers[1] as SettingController;
   List<Widget> appviews = [

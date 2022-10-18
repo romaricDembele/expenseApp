@@ -26,6 +26,7 @@ class _SettingViewState extends State<SettingView>
   Setting _setting;
   _SettingViewState(this._settingController, this._setting) {
     _setting.subscribeObserver(this);
+    _settingController.retrieveSettings();
   }
 
   final salaryController = TextEditingController();

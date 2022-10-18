@@ -1,4 +1,6 @@
 import 'package:expenses_app/controller/interface_setting_controller.dart';
+import 'package:expenses_app/controller/load_setting_rates_port.dart';
+import 'package:expenses_app/controller/update_setting_rates_port.dart';
 import 'package:expenses_app/views/setting_view.dart';
 import 'package:expenses_app/model/setting.dart';
 
@@ -6,7 +8,13 @@ class SettingController implements InterfaceSettingController {
   Setting setting;
   late SettingView settingView;
 
-  SettingController({required this.setting}) {
+  UpdateSettingRatesPort updateSettingRatesPort;
+  LoadSettingRatesPort loadSettingRatesPort;
+
+  SettingController(
+      {required this.setting,
+      required this.updateSettingRatesPort,
+      required this.loadSettingRatesPort}) {
     settingView = SettingView(setting: setting, settingController: this);
   }
 
@@ -30,5 +38,16 @@ class SettingController implements InterfaceSettingController {
     setting.changeNeedRate(double.parse(need!));
     setting.changeSubscriptionRate(double.parse(subscription!));
     setting.changeRentRate(double.parse(rent!));
+    saveSettings();
+  }
+
+  @override
+  void saveSettings() {
+    updateSettingRatesPort.updateSettingRates(setting);
+  }
+
+  @override
+  void retrieveSettings() {
+    loadSettingRatesPort.loadSetting(setting);
   }
 }

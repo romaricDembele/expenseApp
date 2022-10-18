@@ -9,4 +9,7 @@ abstract class InterfaceSettingController {
       String? food,
       String? subscription,
       String? rent});
+
+  void saveSettings();
+  void retrieveSettings();
 }

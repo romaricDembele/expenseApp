@@ -15,6 +15,7 @@ class SettingController implements InterfaceSettingController {
       {required this.setting,
       required this.updateSettingRatesPort,
       required this.loadSettingRatesPort}) {
+    // retrieveSettings();
     settingView = SettingView(setting: setting, settingController: this);
   }
 
@@ -47,7 +48,7 @@ class SettingController implements InterfaceSettingController {
   }
 
   @override
-  void retrieveSettings() {
-    loadSettingRatesPort.loadSetting(setting);
+  Future<void> retrieveSettings() async {
+    await loadSettingRatesPort.loadSetting(setting);
   }
 }

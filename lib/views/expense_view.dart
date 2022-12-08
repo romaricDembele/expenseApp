@@ -38,6 +38,8 @@ class _ExpenseViewState extends State<ExpenseView>
 
   void _submitForm(String dropdownValue, String text) {
     _homeController.addExpense(dropdownValue, text);
+    _homeController.saveExpense(dropdownValue, text);
+
     // setState(() {});
   }
 

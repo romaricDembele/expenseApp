@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:expenses_app/persistence/expense_adapter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'package:expenses_app/controller/home_controller.dart';
@@ -25,10 +26,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
       // options: DefaultFirebaseOptions.currentPlatform,
       );
-  runApp(const MyApp());
-}
 
-List<Object> setupApp() {
   Setting setting = Setting(
       budget: 0,
       food: Food(),
@@ -39,56 +37,56 @@ List<Object> setupApp() {
       rent: Rent(),
       safeDeposit: SafeDeposit(),
       subscription: Subscription());
-  // ignore: unused_local_variable
   FirebaseFirestore db = FirebaseFirestore.instance;
   SettingAdapter settingAdapter = SettingAdapter(db);
   SettingController settingController = SettingController(
       setting: setting,
       updateSettingRatesPort: settingAdapter,
       loadSettingRatesPort: settingAdapter);
-  // BudgetRemain budgetRemain = BudgetRemain(setting: setting);
-  HomeController homeController = HomeController(setting: setting);
-  return [homeController, settingController];
-}
+  ExpenseAdapter expenseAdapter = ExpenseAdapter(db);
+  HomeController homeController = HomeController(
+      setting: setting,
+      createExpensePort: expenseAdapter,
+      loadExpensesPort: expenseAdapter);
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  await settingController.retrieveSettings();
+  await homeController.retrieveExpenses();
 
-  @override
-  Widget build(BuildContext context) {
-    // HomeController homeController = setupApp();
-
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Expense Manager',
-      home: AppStatefullWidget(),
-    );
-  }
-}
-
-class AppStatefullWidget extends StatefulWidget {
-  const AppStatefullWidget({Key? key}) : super(key: key);
-
-  @override
-  State<AppStatefullWidget> createState() => _AppStatefullWidgetState();
-}
-
-List<Widget> generateAppViews() {
-  List<Object> controllers = setupApp();
-  // List<Object> controllers = [];
-  // setupApp().then((List<Object> value) {
-  //   controllers = value;
-  // });
-
-  HomeController homeController = controllers[0] as HomeController;
-  SettingController settingController = controllers[1] as SettingController;
   List<Widget> appviews = [
     homeController.homeView,
     homeController.expenseView,
     // const Text('Settings View')
     settingController.settingView
   ];
-  return appviews;
+
+  runApp(MyApp(appviews: appviews));
+}
+
+class MyApp extends StatelessWidget {
+  List<Widget> appviews;
+
+  MyApp({Key? key, required this.appviews}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Expense Manager',
+      home: AppStatefullWidget(
+        appviews: appviews,
+      ),
+    );
+  }
+}
+
+class AppStatefullWidget extends StatefulWidget {
+  List<Widget> appviews;
+
+  AppStatefullWidget({Key? key, required this.appviews}) : super(key: key);
+
+  @override
+  State<AppStatefullWidget> createState() =>
+      _AppStatefullWidgetState(appviews: appviews);
 }
 
 List<BottomNavigationBarItem> generateBottomNavigationBarItems() {
@@ -102,12 +100,10 @@ List<BottomNavigationBarItem> generateBottomNavigationBarItems() {
 
 class _AppStatefullWidgetState extends State<AppStatefullWidget> {
   int _selectedIndex = 0;
-  List<Widget> appviews = [];
+  // List<Widget> appviews = [];
+  List<Widget> appviews;
 
-  _AppStatefullWidgetState() {
-    List<Widget> appviews = generateAppViews();
-    this.appviews = appviews;
-  }
+  _AppStatefullWidgetState({required this.appviews});
 
   void _changeSelectedItem(int index) {
     setState(() {
@@ -117,7 +113,6 @@ class _AppStatefullWidgetState extends State<AppStatefullWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // List<Widget> appviews = _generateAppViews();
     return Scaffold(
         appBar: AppBar(
           title: const Text('Expense Manager'),

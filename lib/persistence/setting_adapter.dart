@@ -27,9 +27,9 @@ class SettingAdapter implements UpdateSettingRatesPort, LoadSettingRatesPort {
   }
 
   @override
-  void loadSetting(Setting setting) {
+  Future<void> loadSetting(Setting setting) async {
     final docRef = db.collection('settingRates').doc('DjQE2CPvtsiP1MOJjfJo');
-    docRef.get().then((DocumentSnapshot doc) {
+    await docRef.get().then((DocumentSnapshot doc) {
       final data = doc.data() as Map<String, dynamic>;
       setting.setBudget = (data["budget"]).toDouble();
       setting.safeDeposit.rate = (data["safeDeposit"]).toDouble();
@@ -41,5 +41,6 @@ class SettingAdapter implements UpdateSettingRatesPort, LoadSettingRatesPort {
       setting.subscription.rate = (data["subscription"]).toDouble();
       setting.rent.rate = (data["rent"]).toDouble();
     });
+    setting.budgetRemain.calculateRemainBudget();
   }
 }
